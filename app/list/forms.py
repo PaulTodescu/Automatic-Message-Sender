@@ -1,14 +1,13 @@
 from django import forms
-
 from .models import List
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
 
 class CreateListForm(forms.ModelForm):
     class Meta:
         model = List
-        fields = [
-            'name',
-            'date',
-            'reason',
-            'type'
-        ]
+        fields = '__all__'
+        widgets = {
+            'date': DateInput()
+        }

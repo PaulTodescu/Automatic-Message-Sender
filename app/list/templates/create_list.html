@@ -1,69 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/css/adminlte.min.css">
-    <title>Create List</title>
-    <style>
-        p {
-            color: white;
-        }
-    </style>
-</head>
-
-<body class="hold-transition sidebar-mini">
-<div style="height: 100vh" class="wrapper">
-    <aside style="background-color: #878E88" class="main-sidebar sidebar-dark-primary elevation-4">
-        <div class="sidebar">
-            <nav class="mt-2">
-                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
-                    data-accordion="false">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-th"></i>
-                            <p>
-                                Home
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-th"></i>
-                            <p>
-                                Photos
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-th"></i>
-                            <p>
-                                Lists
-                            </p>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </aside>
-
-    <!-- Main container -->
-    <div style="background-color: #96C0B7" class="content-wrapper">
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center">
-            <h1>Create List</h1>
-            <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <input type="submit" value="Submit" />
-            </form>
-        </div>
-
-    </div>
-
+{% extends "base.html" %}
+<!-- Main container -->
+{% block content %}
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center">
+    <h1>Create List</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit"/>
+    </form>
 </div>
+{% endblock %}
 
-</body>
-
-<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script>
-</html>
