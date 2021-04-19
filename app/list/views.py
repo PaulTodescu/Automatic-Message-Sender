@@ -8,7 +8,7 @@ from .models import List
 
 @login_required
 def create_list_view(request):
-    form = CreateListForm(request.POST or None)
+    form = CreateListForm(request.POST, request.FILES)
 
     if form.is_valid():
         form.save()
