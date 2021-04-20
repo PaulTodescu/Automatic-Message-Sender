@@ -27,11 +27,20 @@
 <div class="mainContainer">
 
     <h2 style="margin-bottom: 20px;text-align: center;">Automatic Message Sender</h2>
+
     <div class="d-flex flex-column login-box">
-        <label>Password: </label>
-        <input type="password" class="form-control">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+{#        <label>Password: </label>#}
+{#        <input type="password" class="form-control">#}
         <button type="submit" class="mt-2 btn btn-info align-self-center">Sign in</button>
+        </form>
     </div>
+
+    <h3>{{ confirmation }} </h3>
+
+
 </div>
 </body>
 </html>
