@@ -14,20 +14,29 @@
 {% block content %}
 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
     <div class="d-flex flex-column create-list-form">
-        <h3>Create List</h3>
-        <form method="post" enctype="multipart/form-data">
-            {% for form_field in form %}
-            <div class="form-group">
-                <label for="exampleInputEmail1">{{form_field.name}}</label>
-                <input type="{{form_field.field.widget.input_type}}" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                       placeholder="{{form_field.name}}">
+        <h3>Choose fields</h3>
+        <form action="" method="post" enctype="multipart/form-data">
+            <div id="list-form" class="d-flex flex-column">
+                {% csrf_token %}
+                {% for field in form %}
+                <label>{{field.name}}</label>
+                {{ field }}
+                {% endfor %}
             </div>
-            {% endfor %}
             <div class="d-flex justify-content-center">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </form>
+
     </div>
 </div>
+
+<script>
+    function submit() {
+        const form = document.querySelector('form');
+        const data = new URLSearchParams(new FormData(form).entries());
+        console.log(data);
+    }
+</script>
 {% endblock %}
 

@@ -15,8 +15,8 @@
     </style>
 </head>
 
-<body class="hold-transition sidebar-mini">
-<div style="height: 100vh" class="wrapper">
+<body style="height: 100vh" class="hold-transition sidebar-mini">
+<div class="wrapper">
     <aside style="background-color: #878E88" class="main-sidebar sidebar-dark-primary elevation-4">
         <div class="sidebar">
             <nav class="mt-2">
@@ -39,6 +39,14 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="/view_messages" class="nav-link">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>
+                                Messages
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="/view_lists" class="nav-link">
                             <i class="nav-icon fas fa-th"></i>
                             <p>
@@ -47,7 +55,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="/view_lists" class="nav-link">
+                        <a href="/logout" class="nav-link">
                             <i class="nav-icon fas fa-th"></i>
                             <p>
                                 Logout
@@ -60,7 +68,7 @@
     </aside>
 
     <!-- Main container -->
-    <div style="background-color: #96C0B7" class="content-wrapper">
+    <div style="background-color: #96C0B7; height: 100vh" class="content-wrapper">
         {% block content %}
         {{ content }}
         {% endblock %}
