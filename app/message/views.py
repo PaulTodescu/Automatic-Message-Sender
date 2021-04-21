@@ -83,3 +83,9 @@ def choose_fields(request, messageid):
 @login_required
 def view_messages(request):
     return render(request, "view_messages.html", {'messages': Message.objects.all()})
+
+
+@login_required
+def view_message(request, messageid):
+    print(Message.objects.get(id=int(messageid)))
+    return render(request, "view_message.html", {'message': Message.objects.get(id=messageid)})

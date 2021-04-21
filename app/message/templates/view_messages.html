@@ -27,7 +27,7 @@
                 <th>Fields file</th>
             </tr>
             {% for message in messages %}
-            <tr>
+            <tr style="cursor: pointer" onclick="window.location='/view_message/{{message.id}}/';">
                 <td>{{message.title}}</td>
                 <td>{{message.diff_gender}}</td>
                 <td>{{message.csv_fields}}</td>
