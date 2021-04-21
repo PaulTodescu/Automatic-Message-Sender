@@ -14,7 +14,6 @@ from .forms import CreateMessageForm, ChooseFields
 @login_required
 def create_message(request):
     form = CreateMessageForm(request.POST, request.FILES)
-    print(request.POST)
     if form.is_valid():
         initial_obj = form.save(commit=False)
         initial_obj.save()
@@ -32,10 +31,12 @@ def create_message(request):
         for key in keys:
             CHOICES.append((key, key))
 
-        request.session['FILL_FIELDS'] = to_fill_fields
-        request.session['CHOICES'] = CHOICES
+        id = str(initial_obj.id)
+        request.session['FILL_FIELDS' + id] = to_fill_fields
+        request.session['CHOICES' + id] = CHOICES
+        request.session['FIELD_DICT' + id] = field_dict
 
-        return HttpResponseRedirect(reverse('choose-fields'))
+        return HttpResponseRedirect(reverse('choose-fields', kwargs={'messageid': initial_obj.id}))
 
     context = {
         'form': form
@@ -44,23 +45,39 @@ def create_message(request):
     return render(request, "create_message.html", context)
 
 
-def choose_fields(request):
-    new_fields = {}
-    FILL_FIELDS = request.session.get("FILL_FIELDS")
-    CHOICES = request.session.get("CHOICES")
+@login_required
+def choose_fields(request, messageid):
+    if messageid:
+        new_fields = {}
+        FILL_FIELDS = request.session.get("FILL_FIELDS" + messageid)
+        CHOICES = request.session.get("CHOICES" + messageid)
+        FIELD_DICT = request.session.get("FIELD_DICT" + messageid)
 
-    for field in FILL_FIELDS:
-        new_fields[field] = forms.CharField(widget=forms.Select(choices=CHOICES))
+        for field in FILL_FIELDS:
+            new_fields[field] = forms.CharField(widget=forms.Select(choices=CHOICES))
 
-    DynamicIngridientsForm = type('DynamicIngridientsForm',
-                                  (ChooseFields,),
-                                  new_fields)
+        DynamicFieldForm = type('DynamicIngridientsForm',
+                                (ChooseFields,),
+                                new_fields)
+        form = DynamicFieldForm(request.POST or None)
 
-    form = DynamicIngridientsForm(request.POST or None)
+        if form.is_valid():
+            try:
+                message_obj = Message.objects.get(id=messageid)
+                new_msg = message_obj.message
+                for field in FILL_FIELDS:
+                    new_msg = new_msg.replace(field, FIELD_DICT[form.cleaned_data[field]])
+                message_obj.message = new_msg
+                message_obj.save()
+                request.session.modified = True
+                del request.session["FILL_FIELDS" + messageid]
+                del request.session["CHOICES" + messageid]
+                del request.session["FIELD_DICT" + messageid]
 
-    print(request.POST)
+            except Message.DoesNotExist:
+                return render(request, "choose_fields.html", {'form': form})
 
-    return render(request, "choose_fields.html", {'form': form})
+        return render(request, "choose_fields.html", {'form': form})
 
 
 @login_required
