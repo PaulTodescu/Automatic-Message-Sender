@@ -14,19 +14,15 @@
 {% block content %}
 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
     <div class="d-flex flex-column create-list-form">
-        <h3>Create List</h3>
-        <form method="post" enctype="multipart/form-data">
-            {% for form_field in form %}
-            <div class="form-group">
-                <label>{{form_field.name}}</label>
-                {% if form_field.name == "date" %}
-                <input type="date" class="form-control" placeholder="{{form_field.name}}">
-                {% else %}
-                <input type="{{form_field.field.widget.input_type}}" class="form-control"
-                       placeholder="{{form_field.name}}">
-                {% endif %}
+        <h3>Create Campaign</h3>
+        <form action="" method="post" enctype="multipart/form-data">
+            <div id="list-form" class="d-flex flex-column">
+                {% csrf_token %}
+                {% for field in form %}
+                <label>{{field.name}}</label>
+                {{ field }}
+                {% endfor %}
             </div>
-            {% endfor %}
             <div class="d-flex justify-content-center">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>

@@ -21,4 +21,5 @@ urlpatterns = [
     path('', include('main.urls')),
     path('', include('list.urls')),
     path('', include('message.urls')),
+    path('', include('campaign.urls')),
 ]

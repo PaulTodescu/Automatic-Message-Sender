@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block extrastyle %}
+<style>
+    .box-header {
+        display: flex;
+        align-items: center;
+    }
+
+    .addBtn {
+        font-size: 30px;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div style="padding: 10px; background-color: white" class="box">
+    <div class="box-header">
+        <h3 style="margin: 0">Campaigns</h3>
+        <a class="addBtn" href="/create_campaign">+</a>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body table-responsive no-padding">
+        <table class="table table-hover">
+            <tbody>
+            <tr>
+                <th>Title</th>
+                <th>List</th>
+            </tr>
+            {% for campaign in campaigns %}
+            <tr style="cursor: pointer">
+                <td>{{campaign.title}}</td>
+                <td>{{campaign.list}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
+</div>
+{% endblock %}
+

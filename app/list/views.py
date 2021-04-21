@@ -18,7 +18,7 @@ def create_list_view(request):
         'form': form
     }
 
-    return render(request, "create_list.html", context)
+    return render(request, "create_campaign.html", context)
 
 @login_required
 def view_lists(request):
