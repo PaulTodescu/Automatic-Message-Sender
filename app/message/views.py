@@ -4,7 +4,7 @@ import re
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from .models import Message
 
@@ -73,6 +73,7 @@ def choose_fields(request, messageid):
                 del request.session["FILL_FIELDS" + messageid]
                 del request.session["CHOICES" + messageid]
                 del request.session["FIELD_DICT" + messageid]
+                return HttpResponseRedirect(reverse('view-message', kwargs={'messageid': message_obj.id}))
 
             except Message.DoesNotExist:
                 return render(request, "choose_fields.html", {'form': form})
@@ -84,6 +85,10 @@ def choose_fields(request, messageid):
 def view_messages(request):
     return render(request, "view_messages.html", {'messages': Message.objects.all()})
 
+@login_required
+def delete_message(request, messageid):
+    Message.objects.filter(id=messageid).delete()
+    return redirect(request.META['HTTP_REFERER'])
 
 @login_required
 def view_message(request, messageid):

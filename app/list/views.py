@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from .forms import CreateListForm
@@ -18,10 +18,13 @@ def create_list_view(request):
         'form': form
     }
 
-    return render(request, "create_campaign.html", context)
+    return render(request, "create_list.html", context)
 
 @login_required
 def view_lists(request):
     return render(request, "view_lists.html", {'lists': List.objects.all()})
 
-
+@login_required
+def delete_list(request, listid):
+    List.objects.filter(id=listid).delete()
+    return redirect(request.META['HTTP_REFERER'])

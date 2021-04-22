@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block extrastyle %}
 <style>
     .box-header {
@@ -26,6 +27,7 @@
                 <th>Date</th>
                 <th>Reason</th>
                 <th>Type</th>
+                <th>Delete</th>
             </tr>
             {% for list in lists %}
             <tr>
@@ -33,6 +35,7 @@
                 <td>{{list.date}}</td>
                 <td>{{list.reason}}</td>
                 <td>{{list.type}}</td>
+                <td><a href="/delete_list/{{list.id}}/"><img width="32px" src="{% static "icons/trash.svg" %}" alt="Trash"></a></td>
             </tr>
             {% endfor %}
             </tbody>

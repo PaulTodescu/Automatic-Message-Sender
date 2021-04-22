@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block extrastyle %}
 <style>
     .box-header {
@@ -25,12 +26,14 @@
                 <th>Title</th>
                 <th>Differentiate by gender</th>
                 <th>Fields file</th>
+                <th>Delete</th>
             </tr>
             {% for message in messages %}
             <tr style="cursor: pointer" onclick="window.location='/view_message/{{message.id}}/';">
                 <td>{{message.title}}</td>
                 <td>{{message.diff_gender}}</td>
                 <td>{{message.csv_fields}}</td>
+                <td><a href="/delete_message/{{message.id}}/"><img width="32px" src="{% static "icons/trash.svg" %}" alt="Trash"></a></td>
             </tr>
             {% endfor %}
             </tbody>
