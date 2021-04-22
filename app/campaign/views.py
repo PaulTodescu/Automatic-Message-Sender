@@ -1,3 +1,4 @@
+import os
 import csv
 import requests
 from django.contrib.auth.decorators import login_required
@@ -8,6 +9,7 @@ from .models import Campaign
 
 from .forms import CreateCampaignForm
 
+API_KEY = os.environ.get("SMSO_API_KEY")
 
 @login_required
 def create_campaign(request):
@@ -39,7 +41,7 @@ def send_msg(request, campaignid):
         campaign_obj = Campaign.objects.get(id=campaignid)
         list_type = campaign_obj.list.type
 
-        sms_ids = requests.get("https://app.smso.ro/api/v1/senders/?apiKey=mTr3xmoP3M9usuncicnqdD57DbxHlXWTpz4uePpz")
+        sms_ids = requests.get("https://app.smso.ro/api/v1/senders/?apiKey=" + API_KEY)
 
         if sms_ids.status_code == 200:
             sms_ids = sms_ids.json()[0]['id']
