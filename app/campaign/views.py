@@ -11,6 +11,7 @@ from .forms import CreateCampaignForm
 
 API_KEY = os.environ.get("SMSO_API_KEY")
 
+
 @login_required
 def create_campaign(request):
     form = CreateCampaignForm(request.POST, request.FILES)
@@ -30,10 +31,12 @@ def create_campaign(request):
 def view_campaigns(request):
     return render(request, "view_campaigns.html", {"campaigns": Campaign.objects.all()})
 
+
 @login_required
 def delete_campaign(request, campaignid):
     Campaign.objects.filter(id=campaignid).delete()
     return redirect(request.META['HTTP_REFERER'])
+
 
 @login_required()
 def send_msg(request, campaignid):
@@ -58,11 +61,11 @@ def send_msg(request, campaignid):
                 else:
                     if list_type == "Phone":
                         print(row[0])
-                        # url = 'https://app.smso.ro/api/v1/send/?apiKey=mTr3xmoP3M9usuncicnqdD57DbxHlXWTpz4uePpz'
-                        # myobj = {'to': row[0],
-                        #          'sender': sms_ids,
-                        #          'body': campaign_obj.message.message}
-                        # requests.post(url, data=myobj)
+                        url = 'https://app.smso.ro/api/v1/send/?apiKey=' + API_KEY
+                        payload = {'to': row[0],
+                                   'sender': sms_ids,
+                                   'body': campaign_obj.message.message}
+                        requests.post(url, data=payload)
 
                     line_count += 1
     except:
