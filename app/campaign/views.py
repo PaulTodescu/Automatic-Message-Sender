@@ -7,6 +7,9 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from .models import Campaign
 
+from django.core.mail import send_mail
+from django.conf import settings
+
 from .forms import CreateCampaignForm
 
 API_KEY = os.environ.get("SMSO_API_KEY")
@@ -67,8 +70,22 @@ def send_msg(request, campaignid):
                                    'body': campaign_obj.message.message}
                         requests.post(url, data=payload)
 
+                    elif list_type == "Email":
+                        print(row[0])
+
+                        # send email
+
+                        send_mail(
+                            campaign_obj.title,
+                            campaign_obj.message.message,
+                            settings.EMAIL_HOST_USER,
+                            [row[0]]
+                        )
+
                     line_count += 1
     except:
         raise Http404
 
     return HttpResponseRedirect(reverse('view-campaigns'))
+
+
