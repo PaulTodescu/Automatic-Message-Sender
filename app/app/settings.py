@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'main',
     'list',
     'message',
-    'campaign'
+    'campaign',
+    'image'
 ]
 
 MIDDLEWARE = [
@@ -139,5 +140,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'your_username@gmail.com'
-EMAIL_HOST_PASSWORD = 'your_password'
+EMAIL_HOST_USER = 'todepaul1@gmail.com'
+EMAIL_HOST_PASSWORD = 'tpol1234'

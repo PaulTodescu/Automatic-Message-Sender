@@ -11,5 +11,6 @@ class CreateMessageForm(forms.ModelForm):
         model = Message
         fields = '__all__'
 
+
 class ChooseFields(forms.Form):
     pass
