@@ -85,10 +85,12 @@ def choose_fields(request, messageid):
 def view_messages(request):
     return render(request, "view_messages.html", {'messages': Message.objects.all()})
 
+
 @login_required
 def delete_message(request, messageid):
     Message.objects.filter(id=messageid).delete()
     return redirect(request.META['HTTP_REFERER'])
+
 
 @login_required
 def view_message(request, messageid):
