@@ -1,3 +1,5 @@
+import os.path
+
 from django.db import models
 
 image_types = (
@@ -16,3 +18,4 @@ class Image(models.Model):
 
     def __str__(self):
         return self.label
+

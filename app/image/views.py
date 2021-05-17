@@ -41,7 +41,3 @@ def delete_image(request, imageid):
     return redirect(request.META['HTTP_REFERER'])
 
 
-# @login_required
-# def view_image(request, imageid):
-#     print(Image.objects.get(id=int(imageid)))
-#     return render(request, "view_image.html", {'image': Image.objects.get(id=imageid)})

@@ -91,6 +91,7 @@
 }
 
 </style>
+    {% load filename %}
 {% endblock %}
 {% block content %}
 <div style="padding: 10px; background-color: white" class="box">
@@ -111,12 +112,12 @@
                 <th>Delete</th>
             </tr>
             {% for image in images %}
-            <tr style="cursor: pointer" onclick="showImage('{{ image.image_file.url }}', '{{ image.label }}')">
+            <tr>
                 <td><a href="javascript:showImage('{{ image.image_file.url }}', '{{ image.label }}');">{{image.label}}</a></td>
                 <td>{{image.width}}</td>
                 <td>{{image.height}}</td>
                 <td>{{image.type}}</td>
-                <td>{{image.image_file}}</td>
+                <td>{{image.image_file|filename}}</td>
                 <td><a href="/delete_image/{{image.id}}/"><img width="32px" src="{% static "icons/trash.svg" %}" alt="Trash"></a></td>
             </tr>
             {% endfor %}
