@@ -1,5 +1,8 @@
 import os
 import csv
+from email.mime.image import MIMEImage
+import re
+
 import requests
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, Http404
@@ -7,8 +10,13 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from .models import Campaign
 
+from image.models import Image
+
 from django.core.mail import send_mail
 from django.conf import settings
+
+from django.core.mail import EmailMultiAlternatives
+from app.settings import EMAIL_HOST_USER
 
 from .forms import CreateCampaignForm
 
@@ -57,6 +65,21 @@ def send_msg(request, campaignid):
         with open(campaign_obj.list.csv_file.path) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
+
+            # get the images used in the message
+
+            # image_paths = re.findall(r'src="cid:(.*?)"', campaign_obj.message.message)
+            # images = []
+            # for el in image_paths:
+            #     images.append(el.split('/')[-1])
+
+            images = re.findall(r'src="cid:(.*?)"', campaign_obj.message.message)
+
+            # images = []
+            # image_paths = list(Image.objects.all().values_list('image_file', flat=True))
+            # for path in image_paths:
+            #     images.append(path.split('/')[-1])
+
             for row in csv_reader:
                 if line_count == 0:
                     print(f'Column names are {", ".join(row)}')
@@ -75,17 +98,41 @@ def send_msg(request, campaignid):
 
                         # send email
 
-                        send_mail(
+                        # send_mail(
+                        #     campaign_obj.title,
+                        #     campaign_obj.message.message,
+                        #     settings.EMAIL_HOST_USER,
+                        #     [row[0]]
+                        # )
+
+                        email_content = EmailMultiAlternatives(
                             campaign_obj.title,
                             campaign_obj.message.message,
-                            settings.EMAIL_HOST_USER,
-                            [row[0]]
-                        )
+                            EMAIL_HOST_USER,
+                            [row[0]])
+                        email_content.attach_alternative(campaign_obj.message.message, "text/html")
+                        email_content.mixed_subtype = 'related'
+
+                        media_path = 'media/uploads/images/'
+
+                        for f in images:
+                            fp = open(os.path.join(media_path, f), 'rb')
+                            img = MIMEImage(fp.read())
+                            fp.close()
+                            img.add_header('Content-ID', '<{}>'.format(f))
+                            email_content.attach(img)
+
+                        # image_path = os.path.join(media_path, 'new_image.png')
+                        # fp = open(image_path, 'rb')
+                        # img = MIMEImage(fp.read())
+                        # fp.close()
+                        # img.add_header('Content-ID', '<{}>'.format('new_image.png'))
+                        # email_content.attach(img)
+
+                        email_content.send()
 
                     line_count += 1
     except:
         raise Http404
 
     return HttpResponseRedirect(reverse('view-campaigns'))
-
-
