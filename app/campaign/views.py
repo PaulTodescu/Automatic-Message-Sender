@@ -49,6 +49,13 @@ def delete_campaign(request, campaignid):
     return redirect(request.META['HTTP_REFERER'])
 
 
+def check(email):
+    regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
+    if re.search(regex, email):
+        return 1
+    return 0
+
+
 @login_required()
 def send_msg(request, campaignid):
     try:
@@ -66,19 +73,7 @@ def send_msg(request, campaignid):
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
 
-            # get the images used in the message
-
-            # image_paths = re.findall(r'src="cid:(.*?)"', campaign_obj.message.message)
-            # images = []
-            # for el in image_paths:
-            #     images.append(el.split('/')[-1])
-
             images = re.findall(r'src="cid:(.*?)"', campaign_obj.message.message)
-
-            # images = []
-            # image_paths = list(Image.objects.all().values_list('image_file', flat=True))
-            # for path in image_paths:
-            #     images.append(path.split('/')[-1])
 
             for row in csv_reader:
                 if line_count == 0:
@@ -96,40 +91,43 @@ def send_msg(request, campaignid):
                     elif list_type == "Email":
                         print(row[0])
 
-                        # send email
+                        if check(row[0]):
 
-                        # send_mail(
-                        #     campaign_obj.title,
-                        #     campaign_obj.message.message,
-                        #     settings.EMAIL_HOST_USER,
-                        #     [row[0]]
-                        # )
+                            email_content = EmailMultiAlternatives(
+                                campaign_obj.title,
+                                campaign_obj.message.message,
+                                EMAIL_HOST_USER,
+                                [row[0]]
+                            )
+                            email_content.attach_alternative(campaign_obj.message.message, "text/html")
+                            email_content.mixed_subtype = 'related'
 
-                        email_content = EmailMultiAlternatives(
-                            campaign_obj.title,
-                            campaign_obj.message.message,
-                            EMAIL_HOST_USER,
-                            [row[0]])
-                        email_content.attach_alternative(campaign_obj.message.message, "text/html")
-                        email_content.mixed_subtype = 'related'
+                            media_path = 'media/uploads/images/'
 
-                        media_path = 'media/uploads/images/'
+                            for f in images:
+                                fp = open(os.path.join(media_path, f), 'rb')
+                                img = MIMEImage(fp.read())
+                                fp.close()
+                                img.add_header('Content-ID', '<{}>'.format(f))
+                                email_content.attach(img)
 
-                        for f in images:
-                            fp = open(os.path.join(media_path, f), 'rb')
-                            img = MIMEImage(fp.read())
-                            fp.close()
-                            img.add_header('Content-ID', '<{}>'.format(f))
-                            email_content.attach(img)
+                            email_content.send()
 
-                        # image_path = os.path.join(media_path, 'new_image.png')
-                        # fp = open(image_path, 'rb')
-                        # img = MIMEImage(fp.read())
-                        # fp.close()
-                        # img.add_header('Content-ID', '<{}>'.format('new_image.png'))
-                        # email_content.attach(img)
+                    else:
+                        if check(row[0]) == 0:
+                            url = 'https://app.smso.ro/api/v1/send/?apiKey=' + API_KEY
+                            payload = {'to': row[0],
+                                       'sender': sms_ids,
+                                       'body': campaign_obj.message.message}
+                            requests.post(url, data=payload)
 
-                        email_content.send()
+                        if check(row[0]) == 1:
+                            send_mail(
+                                campaign_obj.title,
+                                campaign_obj.message.message,
+                                settings.EMAIL_HOST_USER,
+                                [row[0]]
+                            )
 
                     line_count += 1
     except:

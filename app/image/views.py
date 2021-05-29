@@ -34,7 +34,6 @@ def view_images(request):
     return render(request, "view_images.html", context)
 
 
-
 @login_required
 def delete_image(request, imageid):
     Image.objects.filter(id=imageid).delete()

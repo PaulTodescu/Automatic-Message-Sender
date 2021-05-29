@@ -114,8 +114,8 @@
             {% for image in images %}
             <tr>
                 <td><a href="javascript:showImage('{{ image.image_file.url }}', '{{ image.label }}');">{{image.label}}</a></td>
-                <td>{{image.width}}</td>
-                <td>{{image.height}}</td>
+                <td>{{image.image_file.width}}</td>
+                <td>{{image.image_file.height}}</td>
                 <td>{{image.type}}</td>
                 <td>{{image.image_file|filename}}</td>
                 <td><a href="/delete_image/{{image.id}}/"><img width="32px" src="{% static "icons/trash.svg" %}" alt="Trash"></a></td>

@@ -11,17 +11,6 @@ from django.contrib.auth.views import LoginView
 from list.models import List
 from .forms import LoginForm
 from django.contrib import messages
-import base64
-
-
-# def encrypt_alg1(text):
-#     encoded_data = base64.b64encode(text)
-#     return encoded_data
-
-
-def decrypt_alg1(text):
-    decoded_data = base64.b64decode(text)
-    return decoded_data
 
 
 @login_required
@@ -42,51 +31,31 @@ class LoginPage(LoginView):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
+
         loginForm = LoginForm(request.POST)  # create login form
 
-        text = None
-
         if loginForm.is_valid():
-            text = loginForm.cleaned_data['password']  # get the password from the form
+            password = loginForm.cleaned_data['password']  # get the password from the form
+            username = loginForm.cleaned_data['username']  # get the username from the form
 
-        user = None
+            # login user
+            user = authenticate(request, username=username, password=password)
 
-        confirmation = None
+            confirmation = None
 
-        xmldoc = minidom.parse('main/password.xml')  # get the password form xml
+            if user is not None:
+                login(request, user)
+                confirmation = True
 
-        value = "".join(
-            el.nodeValue for el in xmldoc.getElementsByTagName('value')[0].childNodes if el.nodeType == el.TEXT_NODE)
+            if confirmation:
+                return redirect("/")
 
-        alg = "".join(
-            el.nodeValue for el in xmldoc.getElementsByTagName('algorithm')[0].childNodes if
-            el.nodeType == el.TEXT_NODE)
+            context = {
+                'form': loginForm,
+                'alert_flag': True
+            }
 
-        password = None
-
-        # check which encryption algorithm is used
-        if alg == "a1":
-            password = decrypt_alg1(value).decode()  # decrypt the password from xml
-
-        # login user
-        if text == password:
-            user = authenticate(request, username='myuser', password=text)
-            confirmation = "logged in"
-        else:
-            confirmation = "incorrect password"
-
-        if user is not None:
-            login(request, user)
-
-        context = {
-            'form': loginForm,
-            'confirmation': confirmation
-        }
-
-        if confirmation == "logged in":
-            return redirect("/")
-
-        return render(request, self.template_name, context)
+            return render(request, self.template_name, context)
 
 
 def logout_view(request):
