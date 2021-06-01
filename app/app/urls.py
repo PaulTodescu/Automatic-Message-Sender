@@ -25,4 +25,5 @@ urlpatterns = [
     path('', include('message.urls')),
     path('', include('campaign.urls')),
     path('', include('image.urls')),
+    path('', include('person.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

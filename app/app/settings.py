@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'list',
     'message',
     'campaign',
-    'image'
+    'image',
+    'person'
 ]
 
 MIDDLEWARE = [

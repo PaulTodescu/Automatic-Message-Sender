@@ -24,3 +24,4 @@ class CreateListForm(forms.ModelForm):
     class Meta:
         model = List
         fields = '__all__'
+        exclude = ['people']
