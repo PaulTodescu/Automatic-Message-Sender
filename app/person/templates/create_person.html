@@ -30,7 +30,7 @@
             <div id="list-form" class="d-flex flex-column">
                 {% csrf_token %}
                 {% for field in form %}
-                <label>{{field.name}}</label>
+                <label>{{field.label}}</label>
                 {{ field }}
                 {% endfor %}
             </div>

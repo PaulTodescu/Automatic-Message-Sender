@@ -23,11 +23,11 @@
                 {% csrf_token %}
                 {% for field in form %}
                 {% if field.name == 'diff_gender' %}
-                <label>{{field.name}}</label>
+                <label>{{field.label}}</label>
                 <input type="checkbox" name="diff_gender" onclick="onCheck();" id="id_diff_gender">
                 {% else %}
                 <div id="{{field.name}}">
-                    <label>{{field.name}}</label>
+                    <label>{{field.label}}</label>
                     {{ field }}
                 </div>
                 {% endif %}

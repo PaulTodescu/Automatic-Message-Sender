@@ -28,20 +28,20 @@
         <h3>Message {{message.id}}</h3>
 
         <div id="list-form" class="d-flex flex-column">
-            <label>title</label>
+            <label>Title</label>
             <input class="form-control" type="text" name="title" maxlength="50" required="" readonly id="id_title"
                    value="{{message.title}}">
 
             <label>diff_gender</label>
             {% if message.diff_gender %}
             <input type="checkbox" name="diff_gender" onclick="return false;" id="id_diff_gender" checked>
-            <label>message_female</label>
+            <label>Message (F)</label>
             <textarea name="message" cols="40" rows="10" class="form-control" readonly required="" id="id_message"
             >{{message.message_female}}</textarea>
             {% else %}
             <input type="checkbox" name="diff_gender" onclick="return false;" id="id_diff_gender">
             {% endif %}
-            <label>message</label>
+            <label>Message</label>
             <textarea name="message" cols="40" rows="10" class="form-control" readonly required="" id="id_message"
             >{{message.message}}</textarea>
         </div>
