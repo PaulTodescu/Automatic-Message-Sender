@@ -16,9 +16,7 @@ class List(models.Model):
     reason = models.TextField(default="")
     type = models.CharField(max_length=20, choices=list_types, default="")
     people = models.ManyToManyField(Person, blank=True)
-    csv_file = models.FileField(upload_to='uploads/people_lists')
+    csv_file = models.FileField(upload_to='uploads/people_lists', null=True, blank=True)
 
     def __str__(self):
         return self.name
-
-

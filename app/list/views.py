@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from person.models import Person
 
-from .forms import CreateListForm
+from .forms import CreateListForm, UpdateListForm
 from .models import List
 
 
@@ -67,6 +67,21 @@ def create_list_view(request):
 @login_required
 def view_lists(request):
     return render(request, "view_lists.html", {'lists': List.objects.all()})
+
+
+@login_required
+def update_list(request, listid):
+    list_ = List.objects.get(id=listid)
+    form = UpdateListForm(request.POST or None, instance=list_)
+
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect(reverse('view-list'))
+
+    context = {
+        'form': form
+    }
+    return render(request, "create_list.html", context)
 
 
 @login_required

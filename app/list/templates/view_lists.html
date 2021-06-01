@@ -30,7 +30,7 @@
                 <th>Delete</th>
             </tr>
             {% for list in lists %}
-            <tr>
+            <tr style="cursor: pointer" onclick="window.location='/update_list/{{list.id}}/';">
                 <td>{{list.name}}</td>
                 <td>{{list.date}}</td>
                 <td>{{list.reason}}</td>
