@@ -25,6 +25,11 @@ def create_message(request):
         path = initial_obj.csv_fields.path
         field_dict = {}
         to_fill_fields = re.findall(r'{xx[0-9]+}', initial_obj.message)
+
+        if initial_obj.diff_gender:
+            for key in re.findall(r'{xx[0-9]+}', initial_obj.message_female):
+                to_fill_fields.append(key)
+
         with open(path) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             keys = next(csv_reader)
@@ -50,7 +55,7 @@ def create_message(request):
     return render(request, "create_message.html", context)
 
 
-@login_required()
+@login_required
 def create_html_message(request):
     form = CreateMessageForm(request.POST, request.FILES)
     if 'submit_form' in request.POST:
@@ -61,6 +66,10 @@ def create_html_message(request):
             path = initial_obj.csv_fields.path
             field_dict = {}
             to_fill_fields = re.findall(r'{xx[0-9]+}', initial_obj.message)
+
+            if initial_obj.diff_gender:
+                for key in re.findall(r'{xx[0-9]+}', initial_obj.message_female):
+                    to_fill_fields.append(key)
             with open(path) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 keys = next(csv_reader)
@@ -116,11 +125,22 @@ def choose_fields(request, messageid):
         if form.is_valid():
             try:
                 message_obj = Message.objects.get(id=messageid)
-                new_msg = message_obj.message
-                for field in FILL_FIELDS:
-                    new_msg = new_msg.replace(field, FIELD_DICT[form.cleaned_data[field]])
-                message_obj.message = new_msg
-                message_obj.save()
+
+                step = 1
+                if message_obj.diff_gender:
+                    step = 2
+
+                for i in range(step):
+                    print(i)
+                    new_msg = message_obj.message if i == 1 else message_obj.message_female
+                    for field in FILL_FIELDS:
+                        new_msg = new_msg.replace(field, FIELD_DICT[form.cleaned_data[field]])
+                    if i == 1:
+                        message_obj.message = new_msg
+                    else:
+                        message_obj.message_female = new_msg
+                    message_obj.save()
+
                 request.session.modified = True
                 del request.session["FILL_FIELDS" + messageid]
                 del request.session["CHOICES" + messageid]

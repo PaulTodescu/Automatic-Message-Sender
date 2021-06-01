@@ -10,8 +10,8 @@ phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',
 class CreateUpdatePersonForm(forms.ModelForm):
     name = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}))
     gender = forms.Select()
-    phone = forms.CharField(validators=[phone_regex], widget=forms.TextInput(attrs={'class': "form-control"}))
-    email = forms.CharField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    phone = forms.CharField(required=False, validators=[phone_regex], widget=forms.TextInput(attrs={'class': "form-control"}))
+    email = forms.CharField(required=False, widget=forms.EmailInput(attrs={'class': 'form-control'}))
 
     class Meta:
         model = Person

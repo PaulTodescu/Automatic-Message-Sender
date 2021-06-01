@@ -35,6 +35,9 @@
             <label>diff_gender</label>
             {% if message.diff_gender %}
             <input type="checkbox" name="diff_gender" onclick="return false;" id="id_diff_gender" checked>
+            <label>message_female</label>
+            <textarea name="message" cols="40" rows="10" class="form-control" readonly required="" id="id_message"
+            >{{message.message_female}}</textarea>
             {% else %}
             <input type="checkbox" name="diff_gender" onclick="return false;" id="id_diff_gender">
             {% endif %}

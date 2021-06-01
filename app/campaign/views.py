@@ -69,8 +69,12 @@ def send_msg(request, campaignid):
         people_queryset = campaign_obj.list.people.all()
 
         for person in people_queryset:
-            if person.email:
+            if campaign_obj.message.diff_gender and person.gender == 'F':
+                message = campaign_obj.message.message_female.replace('{name}', person.name)
+            else:
                 message = campaign_obj.message.message.replace('{name}', person.name)
+
+            if person.email:
                 images = re.findall(r'src="cid:(.*?)"', message)
                 email_content = EmailMultiAlternatives(
                     campaign_obj.title,
@@ -93,7 +97,6 @@ def send_msg(request, campaignid):
                 email_content.send()
             elif person.phone:
                 url = 'https://app.smso.ro/api/v1/send/?apiKey=' + API_KEY
-                message = campaign_obj.message.message.replace('{name}', person.name)
                 payload = {'to': person.phone,
                            'sender': sms_ids,
                            'body': message}
