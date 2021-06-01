@@ -70,14 +70,15 @@ def send_msg(request, campaignid):
 
         for person in people_queryset:
             if person.email:
-                images = re.findall(r'src="cid:(.*?)"', campaign_obj.message.message)
+                message = campaign_obj.message.message.replace('{name}', person.name)
+                images = re.findall(r'src="cid:(.*?)"', message)
                 email_content = EmailMultiAlternatives(
                     campaign_obj.title,
-                    campaign_obj.message.message,
+                    message,
                     EMAIL_HOST_USER,
                     [person.email]
                 )
-                email_content.attach_alternative(campaign_obj.message.message, "text/html")
+                email_content.attach_alternative(message, "text/html")
                 email_content.mixed_subtype = 'related'
 
                 media_path = 'media/uploads/images/'
@@ -92,9 +93,10 @@ def send_msg(request, campaignid):
                 email_content.send()
             elif person.phone:
                 url = 'https://app.smso.ro/api/v1/send/?apiKey=' + API_KEY
+                message = campaign_obj.message.message.replace('{name}', person.name)
                 payload = {'to': person.phone,
                            'sender': sms_ids,
-                           'body': campaign_obj.message.message}
+                           'body': message}
                 requests.post(url, data=payload)
 
     except Exception as e:
