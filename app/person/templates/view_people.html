@@ -27,6 +27,7 @@
                 <th>Gender</th>
                 <th>Phone</th>
                 <th>Email</th>
+                <th>Delete</th>
             </tr>
             {% for person in people %}
             <tr style="cursor: pointer" onclick="window.location='/update_person/{{person.id}}/';">
@@ -34,7 +35,7 @@
                 <td>{{person.gender}}</td>
                 <td>{{person.phone}}</td>
                 <td>{{person.email}}</td>
-<!--                <td><a href="/delete_list/{{list.id}}/"><img width="32px" src="{% static "icons/trash.svg" %}" alt="Trash"></a></td>-->
+                <td><a href="/delete_person/{{person.id}}/"><img width="32px" src="{% static "icons/trash.svg" %}" alt="Trash"></a></td>
             </tr>
             {% endfor %}
             </tbody>

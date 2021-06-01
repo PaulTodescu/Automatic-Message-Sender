@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from .models import Person
@@ -22,10 +22,14 @@ def update_person(request, person_id):
 
     return render(request, "create_person.html", context)
 
+@login_required
+def delete_person(request, person_id):
+    Person.objects.filter(id=person_id).delete()
+    return redirect(request.META['HTTP_REFERER'])
 
 @login_required
 def create_person(request):
-    form = CreateUpdatePersonForm(request.POST, request.FILES)
+    form = CreateUpdatePersonForm(request.POST or None)
 
     print(form.errors)
     if form.is_valid():
