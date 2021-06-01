@@ -7,7 +7,7 @@ phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',
                              message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
 
 
-class CreatePersonForm(forms.ModelForm):
+class CreateUpdatePersonForm(forms.ModelForm):
     name = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}))
     gender = forms.Select()
     phone = forms.CharField(validators=[phone_regex], widget=forms.TextInput(attrs={'class': "form-control"}))
