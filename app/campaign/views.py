@@ -1,5 +1,4 @@
 import os
-import csv
 from email.mime.image import MIMEImage
 import re
 
@@ -17,16 +16,22 @@ from .forms import CreateCampaignForm
 
 API_KEY = os.environ.get("SMSO_API_KEY")
 
+
 @login_required
 def create_campaign(request):
     form = CreateCampaignForm(request.POST, request.FILES)
+    errors = None
 
     if form.is_valid():
-        form.save()
-        return HttpResponseRedirect(reverse('view-campaigns'))
+        if form.cleaned_data['list'].type != 'Email' and form.cleaned_data['message'].html:
+            errors = 'Can\'t bind mixed or phone list with HTML message'
+        else:
+            form.save()
+            return HttpResponseRedirect(reverse('view-campaigns'))
 
     context = {
-        'form': form
+        'form': form,
+        'errors': errors
     }
 
     return render(request, "create_campaign.html", context)
@@ -54,8 +59,6 @@ def check(email):
 def send_msg(request, campaignid):
     try:
         campaign_obj = Campaign.objects.get(id=campaignid)
-        # list_type = campaign_obj.list.type
-
         sms_ids = requests.get("https://app.smso.ro/api/v1/senders/?apiKey=" + API_KEY)
 
         if sms_ids.status_code == 200:
@@ -87,75 +90,12 @@ def send_msg(request, campaignid):
                     email_content.attach(img)
 
                 email_content.send()
-            # elif person.phone:
-            #     url = 'https://app.smso.ro/api/v1/send/?apiKey=' + API_KEY
-            #     payload = {'to':person.phone,
-            #                 'sender': sms_ids,
-            #                 'body': campaign_obj.message.message}
-            #     requests.post(url, data=payload)
-
-
-    # with open(campaign_obj.list.csv_file.path) as csv_file:
-    #     csv_reader = csv.reader(csv_file, delimiter=',')
-    #     line_count = 0
-    #
-    #     images = re.findall(r'src="cid:(.*?)"', campaign_obj.message.message)
-    #
-    #     for row in csv_reader:
-    #         if line_count == 0:
-    #             print(f'Column names are {", ".join(row)}')
-    #             line_count += 1
-    #         else:
-    #             if list_type == "Phone":
-    #                 print(row[0])
-    #                 url = 'https://app.smso.ro/api/v1/send/?apiKey=' + API_KEY
-    #                 payload = {'to': row[0],
-    #                            'sender': sms_ids,
-    #                            'body': campaign_obj.message.message}
-    #                 requests.post(url, data=payload)
-    #
-    #             elif list_type == "Email":
-    #                 print(row[0])
-    #
-    #                 if check(row[0]):
-    #
-    #                     email_content = EmailMultiAlternatives(
-    #                         campaign_obj.title,
-    #                         campaign_obj.message.message,
-    #                         EMAIL_HOST_USER,
-    #                         [row[0]]
-    #                     )
-    #                     email_content.attach_alternative(campaign_obj.message.message, "text/html")
-    #                     email_content.mixed_subtype = 'related'
-    #
-    #                     media_path = 'media/uploads/images/'
-    #
-    #                     for f in images:
-    #                         fp = open(os.path.join(media_path, f), 'rb')
-    #                         img = MIMEImage(fp.read())
-    #                         fp.close()
-    #                         img.add_header('Content-ID', '<{}>'.format(f))
-    #                         email_content.attach(img)
-    #
-    #                     email_content.send()
-    #
-    #             else:
-    #                 if check(row[0]) == 0:
-    #                     url = 'https://app.smso.ro/api/v1/send/?apiKey=' + API_KEY
-    #                     payload = {'to': row[0],
-    #                                'sender': sms_ids,
-    #                                'body': campaign_obj.message.message}
-    #                     requests.post(url, data=payload)
-    #
-    #                 if check(row[0]) == 1:
-    #                     send_mail(
-    #                         campaign_obj.title,
-    #                         campaign_obj.message.message,
-    #                         settings.EMAIL_HOST_USER,
-    #                         [row[0]]
-    #                     )
-    #
-    #             line_count += 1
+            elif person.phone:
+                url = 'https://app.smso.ro/api/v1/send/?apiKey=' + API_KEY
+                payload = {'to': person.phone,
+                           'sender': sms_ids,
+                           'body': campaign_obj.message.message}
+                requests.post(url, data=payload)
 
     except Exception as e:
         print(e)

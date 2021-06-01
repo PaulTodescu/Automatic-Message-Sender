@@ -56,6 +56,7 @@ def create_html_message(request):
     if 'submit_form' in request.POST:
         if form.is_valid():
             initial_obj = form.save(commit=False)
+            initial_obj.html = True
             initial_obj.save()
             path = initial_obj.csv_fields.path
             field_dict = {}

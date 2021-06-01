@@ -15,6 +15,9 @@
 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
     <div class="d-flex flex-column create-list-form">
         <h3 style="text-align:center;">Create Campaign</h3>
+        {% if errors %}
+        <p style="color: red">{{errors}}</p>
+        {% endif %}
         <form action="" method="post" enctype="multipart/form-data">
             <div id="list-form" class="d-flex flex-column mb-5">
                 {% csrf_token %}
