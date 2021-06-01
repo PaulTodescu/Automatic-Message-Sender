@@ -11,11 +11,15 @@ from .forms import CreateListForm
 from .models import List
 
 
-def check(email):
-    regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
-    if re.search(regex, email):
-        return 1
+def check(input):
+    email_regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
+    phone_regex = '^\+?1?\d{9,15}$'
+    if re.search(email_regex, input):
+        return 'Email'
+    elif re.search(phone_regex, input):
+        return 'Phone'
     return 0
+
 
 @login_required
 def create_list_view(request):
@@ -32,12 +36,22 @@ def create_list_view(request):
                 if line_count == 0:
                     line_count += 1
                 else:
-                    if check(row[2]):
+                    # validate email or phone number, skipping invalid fields
+                    check_input = check(row[2])
+
+                    if check_input == 'Email':
                         person, created = Person.objects.get_or_create(name=row[0], gender=row[1], email=row[2])
-                        obj.people.add(person)
-                    else:
+                    elif check_input == 'Phone':
                         person, created = Person.objects.get_or_create(name=row[0], gender=row[1], phone=row[2])
+
+                    # we don't add the person to the list if it doesn't belong to the list type (ex: email in phone list)
+                    # we accept both if the list is mixed
+                    if obj.type != 'Mixt':
+                        if check_input == obj.type:
+                            obj.people.add(person)
+                    else:
                         obj.people.add(person)
+
                     print(row[0])
                     line_count += 1
 
